@@ -1,0 +1,48 @@
+CREATE TABLE Estado (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL
+);
+
+CREATE TABLE Municipio (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    estado_id INTEGER NOT NULL,
+    nombre TEXT NOT NULL,
+    FOREIGN KEY (estado_id) REFERENCES Estado(id)
+);
+
+CREATE TABLE Contribuyente (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    tipo_persona TEXT NOT NULL,
+    rfc TEXT UNIQUE NOT NULL,
+    nombre_razon_social TEXT NOT NULL,
+    correo_electronico TEXT NOT NULL,
+    estado_id INTEGER NOT NULL,
+    municipio_id INTEGER NOT NULL,
+    codigo_postal TEXT NOT NULL,
+    FOREIGN KEY (estado_id) REFERENCES Estado(id),
+    FOREIGN KEY (municipio_id) REFERENCES Municipio(id)
+);
+
+-- Consultas (DAO) para Estados y Municipios
+insertEstado:
+INSERT INTO Estado(nombre) VALUES (?);
+
+insertMunicipio:
+INSERT INTO Municipio(estado_id, nombre) VALUES (?, ?);
+
+getAllEstados:
+SELECT * FROM Estado;
+
+getMunicipiosPorEstado:
+SELECT * FROM Municipio WHERE estado_id = ?;
+
+-- Consultas (DAO) para Contribuyentes
+insertContribuyente:
+INSERT INTO Contribuyente(tipo_persona, rfc, nombre_razon_social, correo_electronico, estado_id, municipio_id, codigo_postal)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+
+getAllContribuyentes:
+SELECT * FROM Contribuyente;
+
+deleteContribuyente:
+DELETE FROM Contribuyente WHERE id = ?;
