@@ -74,6 +74,11 @@ class ContribuyenteRepository(database: AppDatabase) {
             // Si por una muy extraña razon no llega a haber estados, cancelamos el proceso por obvias razones
             if (estados.isEmpty()) return@withContext
 
+//            Si llegamos a agregar o quitar municipios no se actualizara el archivo ya cargado
+//            Con esta consulta nos aseguramos de borrar todos los municipios siempre para que
+//            esté siempre actualizado a lo que se vaya agregando o removiendo
+            queries.deleteAllMunicipios()
+
             // Revisamos si ya hay municipios (usando el primer estado como referencia)
             val primerEstado = estados.first()
             val municipiosPrueba = queries.getMunicipiosPorEstado(primerEstado.id).executeAsList()

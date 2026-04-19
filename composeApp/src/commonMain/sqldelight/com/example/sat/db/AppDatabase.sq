@@ -57,3 +57,7 @@ SET tipo_persona = ?,
     municipio_id = ?,
     codigo_postal = ?
 WHERE id = ?;
+
+
+deleteAllMunicipios:
+DELETE FROM Municipio;
