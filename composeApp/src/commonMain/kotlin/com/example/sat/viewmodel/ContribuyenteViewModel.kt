@@ -19,9 +19,33 @@ import kotlinx.coroutines.launch
 // 1. Ya NO heredamos de ViewModel() de Android
 class ContribuyenteViewModel(private val repository: ContribuyenteRepository) {
 
-    // 2. Creamos nuestro propio entorno de corrutinas 100% compatible con Desktop y Android
+    // 2. Creamos nuestro propio entorno de corrutinas compatible con Desktop y Android
     private val viewModelScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
+
+    /**
+     * Configuramos que cuando al iniciar la aplicacion se llenen los combobox con los estados,
+     * y posteriormente los municipios en base al estado seleccionado
+     * Con verificaciones para saber si ya estan llenadas las tablas de estados y municipios
+     * o en caso de que esten vacias las poblamos con los datos corespondientes
+     */
+    init {
+        viewModelScope.launch {
+            // Cuando la app inicie, revisamos y llenamos los estados si es necesario
+            repository.poblarEstadosSiEstanVacios()
+        }
+    }
+
+    init {
+        viewModelScope.launch {
+//            Primero debemos asegurarnos de que los estados existan
+//            Si no, no tendria sentido seguir
+            repository.poblarEstadosSiEstanVacios()
+
+//             Si sí estan los estados(lo normal), procedemos con llenar los municipios
+            repository.poblarMunicipiosSiEstanVacios()
+        }
+    }
     // ==========================================
     // 1. ESTADO DE LA UI
     // ==========================================
