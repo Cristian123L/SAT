@@ -7,24 +7,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.sat.db.Municipio
 import com.example.sat.viewmodel.ContribuyenteViewModel
+import com.example.sat.db.Contribuyente
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormularioContribuyenteScreen(
     viewModel: ContribuyenteViewModel,
+    contribuyenteAEditar: Contribuyente? = null, // Recibimos el objeto (puede ser nulo)
     onNavigateBack: () -> Unit
 ) {
-    // Observamos los estados (StateFlow) desde el ViewModel
     val estados by viewModel.estados.collectAsState()
     val municipios by viewModel.municipiosFiltrados.collectAsState()
     val estadoSeleccionado by viewModel.estadoSeleccionado.collectAsState()
 
-    // Variables locales para los TextFields
-    var tipoPersona by remember { mutableStateOf("") }
-    var rfc by remember { mutableStateOf("") }
-    var nombreRazonSocial by remember { mutableStateOf("") }
-    var correo by remember { mutableStateOf("") }
-    var codigoPostal by remember { mutableStateOf("") }
+    // 1. Ahora las variables inician con los datos del contribuyente (si existe)
+    var tipoPersona by remember { mutableStateOf(contribuyenteAEditar?.tipo_persona ?: "") }
+    var rfc by remember { mutableStateOf(contribuyenteAEditar?.rfc ?: "") }
+    var nombreRazonSocial by remember { mutableStateOf(contribuyenteAEditar?.nombre_razon_social ?: "") }
+    var correo by remember { mutableStateOf(contribuyenteAEditar?.correo_electronico ?: "") }
+    var codigoPostal by remember { mutableStateOf(contribuyenteAEditar?.codigo_postal ?: "") }
 
     // Variables para controlar si los ComboBox están abiertos
     var expandedEstado by remember { mutableStateOf(false) }
@@ -115,15 +116,29 @@ fun FormularioContribuyenteScreen(
         Button(
             onClick = {
                 if (municipioSeleccionado != null) {
-                    viewModel.guardarContribuyente(
-                        tipoPersona, rfc, nombreRazonSocial, correo, municipioSeleccionado!!.id, codigoPostal
-                    )
-                    onNavigateBack() // Regresar a la lista tras guardar
+                    // 2. Evaluamos si vamos a Crear o a Actualizar
+                    if (contribuyenteAEditar == null) {
+                        viewModel.guardarContribuyente(
+                            tipoPersona, rfc, nombreRazonSocial, correo, municipioSeleccionado!!.id, codigoPostal
+                        )
+                    } else {
+                        viewModel.actualizarContribuyente( // Este es el que creamos antes
+                            id = contribuyenteAEditar.id,
+                            tipoPersona = tipoPersona,
+                            rfc = rfc,
+                            nombreRazonSocial = nombreRazonSocial,
+                            correo = correo,
+                            municipioId = municipioSeleccionado!!.id,
+                            codigoPostal = codigoPostal
+                        )
+                    }
+                    onNavigateBack()
                 }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Guardar Contribuyente")
+            // El texto del botón cambia dependiendo de lo que estemos haciendo
+            Text(if (contribuyenteAEditar == null) "Guardar Contribuyente" else "Actualizar Contribuyente")
         }
     }
 }

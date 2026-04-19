@@ -94,4 +94,29 @@ class ContribuyenteViewModel(private val repository: ContribuyenteRepository) {
             repository.eliminarContribuyente(id)
         }
     }
+
+    fun actualizarContribuyente(
+        id: Long,
+        tipoPersona: String,
+        rfc: String,
+        nombreRazonSocial: String,
+        correo: String,
+        municipioId: Long,
+        codigoPostal: String
+    ) {
+        val estadoId = _estadoSeleccionado.value?.id ?: return
+
+        viewModelScope.launch {
+            repository.actualizarContribuyente(
+                id = id,
+                tipoPersona = tipoPersona,
+                rfc = rfc,
+                nombreRazonSocial = nombreRazonSocial,
+                correo = correo,
+                estadoId = estadoId,
+                municipioId = municipioId,
+                codigoPostal = codigoPostal
+            )
+        }
+    }
 }

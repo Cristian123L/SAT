@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -19,13 +20,12 @@ import com.example.sat.viewmodel.ContribuyenteViewModel
 @Composable
 fun ListaContribuyentesScreen(
     viewModel: ContribuyenteViewModel,
-    onNavigateToForm: () -> Unit
+    onNavigateToForm: (Long?) -> Unit
 ) {
     val contribuyentes by viewModel.contribuyentes.collectAsState()
-
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = onNavigateToForm) {
+            FloatingActionButton(onClick = { onNavigateToForm(null) }) {
                 Icon(Icons.Filled.Add, contentDescription = "Agregar")
             }
         }
@@ -49,6 +49,9 @@ fun ListaContribuyentesScreen(
                                 Text(contribuyente.nombre_razon_social, style = MaterialTheme.typography.titleMedium)
                                 Text("RFC: ${contribuyente.rfc}", style = MaterialTheme.typography.bodyMedium)
                                 Text("Tipo: ${contribuyente.tipo_persona}", style = MaterialTheme.typography.bodySmall)
+                            }
+                            IconButton(onClick = { onNavigateToForm(contribuyente.id) }) {
+                                Icon(Icons.Filled.Edit, contentDescription = "Editar", tint = MaterialTheme.colorScheme.primary)
                             }
                             IconButton(onClick = { viewModel.eliminarContribuyente(contribuyente.id) }) {
                                 Icon(Icons.Filled.Delete, contentDescription = "Eliminar", tint = MaterialTheme.colorScheme.error)

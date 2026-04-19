@@ -46,3 +46,14 @@ SELECT * FROM Contribuyente;
 
 deleteContribuyente:
 DELETE FROM Contribuyente WHERE id = ?;
+
+updateContribuyente:
+UPDATE Contribuyente
+SET tipo_persona = ?,
+    rfc = ?,
+    nombre_razon_social = ?,
+    correo_electronico = ?,
+    estado_id = ?,
+    municipio_id = ?,
+    codigo_postal = ?
+WHERE id = ?;

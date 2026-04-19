@@ -72,4 +72,29 @@ class ContribuyenteRepository(database: AppDatabase) {
     suspend fun eliminarContribuyente(id: Long) {
         queries.deleteContribuyente(id)
     }
+
+    /**
+     * Actualiza un contribuyente existente por su ID.
+     */
+    suspend fun actualizarContribuyente(
+        id: Long,
+        tipoPersona: String,
+        rfc: String,
+        nombreRazonSocial: String,
+        correo: String,
+        estadoId: Long,
+        municipioId: Long,
+        codigoPostal: String
+    ) {
+        queries.updateContribuyente(
+            tipo_persona = tipoPersona,
+            rfc = rfc,
+            nombre_razon_social = nombreRazonSocial,
+            correo_electronico = correo,
+            estado_id = estadoId,
+            municipio_id = municipioId,
+            codigo_postal = codigoPostal,
+            id = id
+        )
+    }
 }
