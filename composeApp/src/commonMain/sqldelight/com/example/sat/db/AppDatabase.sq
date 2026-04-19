@@ -59,5 +59,6 @@ SET tipo_persona = ?,
 WHERE id = ?;
 
 
+-- "Boton de reinicio" de municipios para siempre comenzar con datos actualizados
 deleteAllMunicipios:
 DELETE FROM Municipio;
