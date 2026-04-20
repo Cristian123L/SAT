@@ -13,14 +13,23 @@ CREATE TABLE Municipio (
 CREATE TABLE Contribuyente (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     tipo_persona TEXT NOT NULL,
-    rfc TEXT UNIQUE NOT NULL,
+    rfc TEXT NOT NULL,
     nombre_razon_social TEXT NOT NULL,
     correo_electronico TEXT NOT NULL,
+    telefono TEXT,
+    curp TEXT,
+    fecha_nacimiento TEXT,
+    regimen_fiscal TEXT,
+    fecha_constitucion TEXT,
+    rfc_representante TEXT,
+    rfc_socios TEXT,
+    num_escritura TEXT,
+    regimen_capital TEXT,
+    vialidad TEXT,
+    actividad_economica TEXT,
     estado_id INTEGER NOT NULL,
     municipio_id INTEGER NOT NULL,
-    codigo_postal TEXT NOT NULL,
-    FOREIGN KEY (estado_id) REFERENCES Estado(id),
-    FOREIGN KEY (municipio_id) REFERENCES Municipio(id)
+    codigo_postal TEXT NOT NULL
 );
 
 -- Consultas (DAO) para Estados y Municipios
@@ -37,10 +46,16 @@ getMunicipiosPorEstado:
 SELECT * FROM Municipio WHERE estado_id = ?;
 
 -- Consultas (DAO) para Contribuyentes
+-- 2. CONSULTA DE INSERCIÓN ACTUALIZADA
 insertContribuyente:
-INSERT INTO Contribuyente(tipo_persona, rfc, nombre_razon_social, correo_electronico, estado_id, municipio_id, codigo_postal)
-VALUES (?, ?, ?, ?, ?, ?, ?);
+INSERT INTO Contribuyente(
+    tipo_persona, rfc, nombre_razon_social, correo_electronico, telefono,
+    curp, fecha_nacimiento, regimen_fiscal, fecha_constitucion,
+    rfc_representante, rfc_socios, num_escritura, regimen_capital,
+    vialidad, actividad_economica, estado_id, municipio_id, codigo_postal
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
+-- Obtener todos los contribuyentes
 getAllContribuyentes:
 SELECT * FROM Contribuyente;
 

@@ -141,29 +141,36 @@ class ContribuyenteRepository(database: AppDatabase) {
      * Obtiene todos los contribuyentes como un Flow.
      */
     fun getContribuyentes(): Flow<List<Contribuyente>> {
-        return queries.getAllContribuyentes()
-            .asFlow()
-            .mapToList(Dispatchers.IO)
+        return queries.getAllContribuyentes().asFlow().mapToList(Dispatchers.IO)
     }
 
     /**
      * Inserta un nuevo contribuyente. Se ejecuta como una función suspendida (corrutina)
      * porque es una operación de escritura.
      */
-    suspend fun agregarContribuyente(
-        tipoPersona: String,
-        rfc: String,
-        nombreRazonSocial: String,
-        correo: String,
-        estadoId: Long,
-        municipioId: Long,
-        codigoPostal: String
+    fun agregarContribuyente(
+        tipoPersona: String, rfc: String, nombreRazonSocial: String, correo: String,
+        telefono: String?, curp: String?, fechaNacimiento: String?, regimenFiscal: String?,
+        fechaConstitucion: String?, rfcRepresentante: String?, rfcSocios: String?, numEscritura: String?,
+        regimenCapital: String?, vialidad: String?, actividadEconomica: String?,
+        estadoId: Long, municipioId: Long, codigoPostal: String
     ) {
         queries.insertContribuyente(
             tipo_persona = tipoPersona,
             rfc = rfc,
             nombre_razon_social = nombreRazonSocial,
             correo_electronico = correo,
+            telefono = telefono,
+            curp = curp,
+            fecha_nacimiento = fechaNacimiento,
+            regimen_fiscal = regimenFiscal,
+            fecha_constitucion = fechaConstitucion,
+            rfc_representante = rfcRepresentante,
+            rfc_socios = rfcSocios,
+            num_escritura = numEscritura,
+            regimen_capital = regimenCapital,
+            vialidad = vialidad,
+            actividad_economica = actividadEconomica,
             estado_id = estadoId,
             municipio_id = municipioId,
             codigo_postal = codigoPostal

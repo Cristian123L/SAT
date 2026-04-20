@@ -91,13 +91,13 @@ class ContribuyenteViewModel(private val repository: ContribuyenteRepository) {
     }
 
     fun guardarContribuyente(
-        tipoPersona: String,
-        rfc: String,
-        nombreRazonSocial: String,
-        correo: String,
-        municipioId: Long,
-        codigoPostal: String
+        tipoPersona: String, rfc: String, nombreRazonSocial: String, correo: String,
+        telefono: String, curp: String, fechaNacimiento: String, regimenFiscal: String,
+        fechaConstitucion: String, rfcRepresentante: String, rfcSocios: String, numEscritura: String,
+        regimenCapital: String, vialidad: String, actividadEconomica: String,
+        municipioId: Long, codigoPostal: String
     ) {
+        // Obtenemos el estado actualmente seleccionado
         val estadoId = _estadoSeleccionado.value?.id ?: return
 
         viewModelScope.launch {
@@ -106,6 +106,24 @@ class ContribuyenteViewModel(private val repository: ContribuyenteRepository) {
                 rfc = rfc,
                 nombreRazonSocial = nombreRazonSocial,
                 correo = correo,
+                telefono = telefono.ifBlank { null }, // Si está vacío, manda null
+
+                // --- LÓGICA INTELIGENTE ---
+                // Si es Física, manda sus datos. Si es Moral, los anula.
+                curp = if (tipoPersona == "FÍSICA") curp else null,
+                fechaNacimiento = if (tipoPersona == "FÍSICA") fechaNacimiento else null,
+                regimenFiscal = if (tipoPersona == "FÍSICA") regimenFiscal else null,
+
+                // Si es Moral, manda sus datos. Si es Física, los anula.
+                fechaConstitucion = if (tipoPersona == "MORAL") fechaConstitucion else null,
+                rfcRepresentante = if (tipoPersona == "MORAL") rfcRepresentante else null,
+                rfcSocios = if (tipoPersona == "MORAL") rfcSocios else null,
+                numEscritura = if (tipoPersona == "MORAL") numEscritura else null,
+                regimenCapital = if (tipoPersona == "MORAL") regimenCapital else null,
+
+                // Datos compartidos que siempre se mandan
+                vialidad = vialidad,
+                actividadEconomica = actividadEconomica,
                 estadoId = estadoId,
                 municipioId = municipioId,
                 codigoPostal = codigoPostal
