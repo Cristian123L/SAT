@@ -1,4 +1,4 @@
-package com.example.sat.db
+package com.example.sat.db // O el paquete donde lo tengas
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
@@ -8,14 +8,46 @@ import kotlinx.coroutines.flow.Flow
 
 class ContribuyenteRepository(database: AppDatabase) {
 
-    // Accedemos a las consultas generadas por SQLDelight
     private val queries = database.appDatabaseQueries
 
-    // --- Catálogos ---
+    // ==========================================
+    // INICIALIZADOR DE DATOS DE PRUEBA
+    // ==========================================
+    init {
+        // Revisamos si la tabla de Estados está vacía (usamos executeAsList para leer de inmediato)
+        val estadosActuales = queries.getAllEstados().executeAsList()
 
-    /**
-     * Obtiene todos los estados como un Flow para observar cambios.
-     */
+        if (estadosActuales.isEmpty()) {
+            // 1. Insertamos Estados
+            queries.insertEstado("Ciudad de México")
+            queries.insertEstado("Jalisco")
+            queries.insertEstado("Nuevo León")
+            queries.insertEstado("Michoacán") // ¡Tu estado!
+            queries.insertEstado("Guanajuato")
+
+            // 2. Buscamos los IDs que SQLite les asignó automáticamente
+            val estadosNuevos = queries.getAllEstados().executeAsList()
+            val idCdmx = estadosNuevos.find { it.nombre == "Ciudad de México" }?.id
+            val idMich = estadosNuevos.find { it.nombre == "Michoacán" }?.id
+            val idGto = estadosNuevos.find { it.nombre == "Guanajuato" }?.id
+
+            // 3. Insertamos Municipios ligados a esos Estados
+            if (idCdmx != null) {
+                queries.insertMunicipio(idCdmx, "Coyoacán")
+                queries.insertMunicipio(idCdmx, "Tlalpan")
+            }
+            if (idMich != null) {
+                queries.insertMunicipio(idMich, "Morelia")
+                queries.insertMunicipio(idMich, "Cuitzeo")
+            }
+            if(idGto != null) {
+                queries.insertMunicipio(idGto, "Casa De Shanty")
+                queries.insertMunicipio(idGto, "Moroleón")
+                queries.insertMunicipio(idGto, "Uriangato")
+            }
+        }
+    }
+
     fun getEstados(): Flow<List<Estado>> {
         return queries.getAllEstados()
             .asFlow()
