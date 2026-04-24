@@ -9,21 +9,28 @@ import com.example.sat.viewmodel.ContribuyenteViewModel
 
 @Composable
 fun AppNavigation(viewModel: ContribuyenteViewModel) {
-    // Usamos el sistema de estados nativo de Compose.
-    // Es 100% seguro y multiplataforma.
     var pantallaActual by remember { mutableStateOf("lista") }
+    // Guardamos el ID del contribuyente a editar (null = nuevo)
+    var idAEditar by remember { mutableStateOf<Long?>(null) }
 
     when (pantallaActual) {
         "lista" -> {
             ListaContribuyentesScreen(
                 viewModel = viewModel,
-                onNavigateToForm = { pantallaActual = "formulario" } // Cambia el estado a formulario
+                onNavigateToForm = { id ->
+                    idAEditar = id           // null si es nuevo, ID si es edición
+                    pantallaActual = "formulario"
+                }
             )
         }
         "formulario" -> {
             FormularioContribuyenteScreen(
                 viewModel = viewModel,
-                onNavigateBack = { pantallaActual = "lista" } // Cambia el estado de regreso a lista
+                contribuyenteId = idAEditar, // Pasamos el ID al formulario
+                onNavigateBack = {
+                    idAEditar = null          // Limpiamos al regresar
+                    pantallaActual = "lista"
+                }
             )
         }
     }

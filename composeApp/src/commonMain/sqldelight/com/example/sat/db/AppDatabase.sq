@@ -62,17 +62,30 @@ SELECT * FROM Contribuyente;
 deleteContribuyente:
 DELETE FROM Contribuyente WHERE id = ?;
 
-updateContribuyente:
-UPDATE Contribuyente
-SET tipo_persona = ?,
-    rfc = ?,
-    nombre_razon_social = ?,
-    correo_electronico = ?,
-    estado_id = ?,
-    municipio_id = ?,
-    codigo_postal = ?
-WHERE id = ?;
+getContribuyenteById:
+SELECT * FROM Contribuyente WHERE id = :id;
 
+updateContribuyente:
+UPDATE Contribuyente SET
+tipo_persona = :tipo_persona,
+rfc = :rfc,
+nombre_razon_social = :nombre_razon_social,
+correo_electronico = :correo_electronico,
+telefono = :telefono,
+curp = :curp,
+fecha_nacimiento = :fecha_nacimiento,
+regimen_fiscal = :regimen_fiscal,
+fecha_constitucion = :fecha_constitucion,
+rfc_representante = :rfc_representante,
+rfc_socios = :rfc_socios,
+num_escritura = :num_escritura,
+regimen_capital = :regimen_capital,
+vialidad = :vialidad,
+actividad_economica = :actividad_economica,
+estado_id = :estado_id,
+municipio_id = :municipio_id,
+codigo_postal = :codigo_postal
+WHERE id = :id;
 
 -- "Boton de reinicio" de municipios para siempre comenzar con datos actualizados
 deleteAllMunicipios:

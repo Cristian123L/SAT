@@ -60,6 +60,10 @@ class ContribuyenteViewModel(private val repository: ContribuyenteRepository) {
     private val _estadoSeleccionado = MutableStateFlow<Estado?>(null)
     val estadoSeleccionado: StateFlow<Estado?> = _estadoSeleccionado
 
+    private val _contribuyenteEditando = MutableStateFlow<Contribuyente?>(null)
+    val contribuyenteEditando: StateFlow<Contribuyente?> = _contribuyenteEditando
+
+
     @OptIn(ExperimentalCoroutinesApi::class)
     val municipiosFiltrados: StateFlow<List<Municipio>> = _estadoSeleccionado
         .flatMapLatest { estado ->
@@ -138,16 +142,14 @@ class ContribuyenteViewModel(private val repository: ContribuyenteRepository) {
     }
 
     fun actualizarContribuyente(
-        id: Long,
-        tipoPersona: String,
-        rfc: String,
-        nombreRazonSocial: String,
-        correo: String,
-        municipioId: Long,
-        codigoPostal: String
+        id: Long, tipoPersona: String, rfc: String, nombreRazonSocial: String,
+        correo: String, telefono: String, curp: String, fechaNacimiento: String,
+        regimenFiscal: String, fechaConstitucion: String, rfcRepresentante: String,
+        rfcSocios: String, numEscritura: String, regimenCapital: String,
+        vialidad: String, actividadEconomica: String,
+        estadoId: Long,        // ← Recibe estadoId directo, ya no lo lee del StateFlow
+        municipioId: Long, codigoPostal: String
     ) {
-        val estadoId = _estadoSeleccionado.value?.id ?: return
-
         viewModelScope.launch {
             repository.actualizarContribuyente(
                 id = id,
@@ -155,10 +157,33 @@ class ContribuyenteViewModel(private val repository: ContribuyenteRepository) {
                 rfc = rfc,
                 nombreRazonSocial = nombreRazonSocial,
                 correo = correo,
-                estadoId = estadoId,
+                telefono = telefono.ifBlank { null },
+                curp = if (tipoPersona == "FÍSICA") curp else null,
+                fechaNacimiento = if (tipoPersona == "FÍSICA") fechaNacimiento else null,
+                regimenFiscal = if (tipoPersona == "FÍSICA") regimenFiscal else null,
+                fechaConstitucion = if (tipoPersona == "MORAL") fechaConstitucion else null,
+                rfcRepresentante = if (tipoPersona == "MORAL") rfcRepresentante else null,
+                rfcSocios = if (tipoPersona == "MORAL") rfcSocios else null,
+                numEscritura = if (tipoPersona == "MORAL") numEscritura else null,
+                regimenCapital = if (tipoPersona == "MORAL") regimenCapital else null,
+                vialidad = vialidad,
+                actividadEconomica = actividadEconomica,
+                estadoId = estadoId,           // ← Usa el que viene del parámetro
                 municipioId = municipioId,
                 codigoPostal = codigoPostal
             )
         }
     }
+
+    fun cargarContribuyenteParaEditar(id: Long) {
+        viewModelScope.launch {
+            _contribuyenteEditando.value = repository.getContribuyentePorId(id)
+        }
+    }
+
+    fun limpiarEdicion() {
+        _contribuyenteEditando.value = null
+        _estadoSeleccionado.value = null
+    }
+
 }

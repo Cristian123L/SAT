@@ -133,6 +133,12 @@ class ContribuyenteRepository(database: AppDatabase) {
         }
     }
 
+    suspend fun getContribuyentePorId(id: Long): Contribuyente? {
+        return kotlinx.coroutines.withContext(Dispatchers.IO) {
+            queries.getContribuyenteById(id).executeAsOneOrNull()
+        }
+    }
+
 
 
     // --- CRUD Contribuyentes ---
@@ -188,20 +194,29 @@ class ContribuyenteRepository(database: AppDatabase) {
      * Actualiza un contribuyente existente por su ID.
      */
     suspend fun actualizarContribuyente(
-        id: Long,
-        tipoPersona: String,
-        rfc: String,
-        nombreRazonSocial: String,
-        correo: String,
-        estadoId: Long,
-        municipioId: Long,
-        codigoPostal: String
+        id: Long, tipoPersona: String, rfc: String, nombreRazonSocial: String,
+        correo: String, telefono: String?, curp: String?, fechaNacimiento: String?,
+        regimenFiscal: String?, fechaConstitucion: String?, rfcRepresentante: String?,
+        rfcSocios: String?, numEscritura: String?, regimenCapital: String?,
+        vialidad: String?, actividadEconomica: String?,
+        estadoId: Long, municipioId: Long, codigoPostal: String
     ) {
         queries.updateContribuyente(
             tipo_persona = tipoPersona,
             rfc = rfc,
             nombre_razon_social = nombreRazonSocial,
             correo_electronico = correo,
+            telefono = telefono,
+            curp = curp,
+            fecha_nacimiento = fechaNacimiento,
+            regimen_fiscal = regimenFiscal,
+            fecha_constitucion = fechaConstitucion,
+            rfc_representante = rfcRepresentante,
+            rfc_socios = rfcSocios,
+            num_escritura = numEscritura,
+            regimen_capital = regimenCapital,
+            vialidad = vialidad,
+            actividad_economica = actividadEconomica,
             estado_id = estadoId,
             municipio_id = municipioId,
             codigo_postal = codigoPostal,
